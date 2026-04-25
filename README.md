@@ -471,4 +471,83 @@ Gradio was selected for its **Reactive State Management** and rapid prototyping 
 
 ---
 
+---
+
+## 30. Internal Prompt Engineering Templates
+
+To maintain system transparency, here are the core system prompts utilized within the orchestration layer:
+
+### A. The Structuring Agent
+> "Extract restaurant data to JSON. Fields: name, location, food_style, rating, price_range (number of $), vibe. Return ONLY JSON."
+
+### B. The ReAct Reasoning Agent
+> "You are Connoisseur Companion. Tools: search_restaurants. Use them to answer user queries accurately. Follow the Thought-Action-Observation cycle."
+
+### C. The Analytical Agents (Multi-Agent)
+> "Analyze user visits and dietary restrictions. Return a structured JSON profile containing favorite_cuisines and restrictions."
+
+---
+
+## 31. Deep Dive: The Fusion Algorithm
+
+Our retrieval system uses a **Hybrid Fusion** approach. While standard vector search is powerful, it often lacks "keyword sensitivity."
+- **Current Approach**: Similarity Search with Score Normalization.
+- **Mathematical Logic**: $Score_{final} = \sum (w_i \cdot Normalized\_Score_i)$.
+- **Future Enhancement**: Transitioning to **Reciprocal Rank Fusion (RRF)**, which calculates:
+  $$RRFscore(d \in D) = \sum_{r \in R} \frac{1}{k + r(d)}$$
+  Where $r(d)$ is the rank of document $d$ in the result set $R$.
+
+---
+
+## 32. Containerization: Docker & Orchestration
+
+For production deployments, the application is containerized to ensure environmental consistency.
+
+### Sample `Dockerfile` logic:
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 7860
+ENV GRADIO_SERVER_NAME="0.0.0.0"
+CMD ["python", "app.py"]
+```
+
+---
+
+## 33. Detailed Cost Analysis (OpenAI gpt-4o-mini)
+
+| Item | Context Length | Cost (per 1k runs) |
+| :--- | :--- | :--- |
+| **Initial Build** | ~50k tokens | ~$0.007 |
+| **Chat Request (RAG)** | ~2k tokens | ~$0.0003 |
+| **Agent Run (Parallel)** | ~8k tokens | ~$0.0012 |
+| **Total per Session** | **~10k tokens** | **~$0.0015** |
+
+*Note: 1,000 full user sessions cost approximately $1.50 USD, making this a highly cost-effective solution.*
+
+---
+
+## 34. Dependency Compatibility Matrix
+
+We have locked specific versions to prevent breaking changes:
+- `gradio==4.44.0`: Chosen for its stable ChatInterface API.
+- `chromadb==0.5.23`: Optimal compatibility with `langchain-chroma`.
+- `openai==1.58.0`: Support for the latest `gpt-4o-mini` tool-calling features.
+
+---
+
+## 35. Contribution & Governance
+
+We welcome community contributions. Please follow these steps:
+1. **Fork** the repository.
+2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`).
+3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`).
+4. **Push to the branch** (`git push origin feature/AmazingFeature`).
+5. **Open a Pull Request**.
+
+---
+
 **Developed with ❤️ by the Connoisseur Team.**
