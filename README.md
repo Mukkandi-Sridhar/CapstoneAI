@@ -408,4 +408,67 @@ For a production deployment, the architecture would migrate to the following AWS
 
 ---
 
+---
+
+## 24. Component Sequence: Request Lifecycle
+
+To understand the internal "wiring" of a request, follow this sequence:
+
+1.  **Entry**: User submits a natural language query via Gradio.
+2.  **Intent Classification**: LLM determines if the user is asking for a recommendation (RAG path) or general help (Direct path).
+3.  **Semantic Retrieval**: Query is embedded and searched against ChromaDB.
+4.  **Parallel Enrichment**: The `ThreadPoolExecutor` spins up 4 agents to analyze:
+    - User Profile (History match)
+    - Global Trends (Popularity)
+    - Culinary Style (Artistic value)
+    - Nutrition/Diet (Constraint checking)
+5.  **Synthesis**: All outputs are gathered into a final context window.
+6.  **Response**: The LLM generates a human-friendly response with markdown formatting.
+
+---
+
+## 25. Data Versioning & ML Ops (DVC)
+
+In a production environment, we implement **Data Version Control (DVC)** to track changes in:
+- `data/California-Culinary-Map.txt`: Ensuring reproducible builds.
+- `outputs/chroma_db`: Tracking the "Knowledge State" of the model.
+This allows for "Knowledge Rollbacks" if a data ingestion batch contains corrupted or biased information.
+
+---
+
+## 26. Testing & Evaluation Strategy (RAGAS)
+
+We evaluate the quality of our RAG system using the **RAGAS (RAG Assessment)** framework, measuring:
+- **Faithfulness**: Is the answer derived strictly from the retrieved context?
+- **Answer Relevance**: Does the response address the specific user query?
+- **Context Precision**: Are the retrieved restaurants truly the best matches?
+- **Context Recall**: Did we miss any relevant data?
+
+---
+
+## 27. Security: Mitigating OWASP Top 10 for LLMs
+
+We proactively address vulnerabilities such as:
+- **LLM01: Prompt Injection**: Implementing input filtering and strict system message segregation.
+- **LLM02: Insecure Output Handling**: Using `clean_json` and type-checking to ensure malicious code isn't executed from LLM responses.
+- **LLM06: Sensitive Information Disclosure**: Sanitizing input to ensure the system doesn't reveal internal paths or API configurations.
+
+---
+
+## 28. Ethical AI & Culinary Bias
+
+AI models can inherit biases from their training data (e.g., favoring Western cuisines over others).
+- **Mitigation**: We ensure the `California-Culinary-Map.txt` represents a diverse set of cultures.
+- **Privacy**: No PII (Personally Identifiable Information) is stored in the vector database; only anonymized user preferences are used for the `profile` agent.
+
+---
+
+## 29. UX Design Philosophy: Why Gradio?
+
+Gradio was selected for its **Reactive State Management** and rapid prototyping capabilities. 
+- **User-Centric Design**: The chat interface mimics modern messaging apps, reducing the learning curve.
+- **Transparency**: The "Agents Demo" tab provides "Glass-box AI," allowing users to see the background analytical processes that usually happen in "Black-box" systems.
+
+---
+
 **Developed with ❤️ by the Connoisseur Team.**
