@@ -550,4 +550,80 @@ We welcome community contributions. Please follow these steps:
 
 ---
 
+---
+
+## 36. Software Design Patterns Implemented
+
+The Connoisseur Companion is built on proven software engineering principles to ensure maintainability:
+
+- **Facade Pattern**: `config.py` (and the unified `app.py` headers) acts as a facade, hiding the complexity of the OpenAI and ChromaDB clients.
+- **Strategy Pattern**: The `fuse` function allows for different retrieval strategies (Semantic, Keyword, Hybrid) to be swapped at runtime.
+- **Orchestrator Pattern**: The main interaction loop manages the lifecycle of multiple sub-agents.
+- **Retry Pattern**: Implemented via `tenacity` to handle transient failures in distributed systems.
+
+---
+
+## 37. API Contract Specifications (Internal)
+
+To facilitate future microservice migration, we follow these internal JSON schemas:
+
+### Agent Request Schema
+```json
+{
+  "agent_id": "string",
+  "context": "object",
+  "history": "array",
+  "parameters": {
+    "temperature": "float",
+    "max_tokens": "int"
+  }
+}
+```
+
+---
+
+## 38. Hardware Acceleration: Moving to GPU (CUDA)
+
+While the project runs efficiently on a CPU, high-traffic production environments should utilize NVIDIA GPUs.
+
+**Optimization Steps:**
+1.  **Environment**: Install `torch` with CUDA support.
+2.  **Model Loading**:
+    ```python
+    text_embedder = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")
+    ```
+3.  **Result**: 5x - 10x increase in embedding generation throughput.
+
+---
+
+## 39. Data Quality Assurance (QA)
+
+We recommend integrating **Great Expectations** for automated data validation of `restaurants.json`:
+- **Expectation**: `rating` must be between 0 and 5.
+- **Expectation**: `price_range` must be a string containing only '$'.
+- **Expectation**: `name` must be unique.
+
+---
+
+## 40. User Personas & Use Case Mapping
+
+| Persona | Use Case | Key Feature |
+| :--- | :--- | :--- |
+| **The Foodie** | Discovering "moody" hidden gems. | Semantic Vibe Search |
+| **The Traveler** | Finding compliant meals in a new city. | Nutrition/Dietary Agent |
+| **The Critic** | Analyzing local culinary trends. | Trends Analytical Agent |
+| **The Busy Parent** | Quick, reliable family recommendations. | Synthesis Agent |
+
+---
+
+## 41. Comprehensive Glossary of Terms
+
+- **RAG (Retrieval-Augmented Generation)**: Enhancing LLM responses with external, grounded data.
+- **ReAct (Reasoning + Acting)**: A prompting technique that enables models to use external tools.
+- **Vector Database**: A specialized database that stores data as high-dimensional points.
+- **Embedding**: A numerical representation of text that captures semantic meaning.
+- **Zero-Shot**: A task performed by an AI without prior specific training or examples.
+
+---
+
 **Developed with ❤️ by the Connoisseur Team.**
